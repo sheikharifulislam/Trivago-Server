@@ -1,6 +1,7 @@
 const express  = require('express');
 const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv').config()
+const objectId = require('mongodb').ObjectId;
 const cors = require('cors');
 const app = express();
 
@@ -15,12 +16,61 @@ async function run() {
         const database = client.db('trivago');
         const userOrderCollection = database.collection("User-Order");
         const allOrder = database.collection("All-Order");
-        const allService = database.collection("All-Service");
+        const serviceData = database.collection("All-Service");
         
-        userOrderCollection.insertOne({
-            name: 'Ariful',
-        })
+        //get api
+       app.get('/all-services', async(req,res) => {
+           const allService = await serviceData.find({}).toArray();
+           res.status(200).json(allService);
+       })
 
+       app.get('/my-all-orders', async(req,res) => {
+        const result = await userOrderCollection.find({}).toArray();
+       
+        res.send(result);
+
+       })
+
+       app.get('/manage-all-orders', async(req,res) => {
+           const result = await allOrder.find({}).toArray();
+           res.send(result);
+       })
+
+       //post api
+
+       app.post('/add-order', async(req,res) => {
+            const result = await userOrderCollection.insertOne(req.body);
+            res.send(result);
+           
+       })
+
+       app.post('/manage-all-orders', async(req,res) => {
+           const result = await allOrder.insertOne(req.body);
+           res.end();
+       })
+       
+       app.post('/add-service', async(req,res) => {
+           const result = await serviceData.insertOne(req.body);
+           res.send(result);
+       })
+
+       //update
+
+       app.patch('/confirm-order/:orderId', async(req,res) => {
+           const {orderId} = req.params;           
+           const filter = {_id: objectId(orderId)};
+           const updateOrderStatus = {
+               $set: {
+                    orderStatus: "confirm",
+               }
+           }
+
+           const result = await allOrder.updateOne(filter, updateOrderStatus);
+           res.send(result);
+       })
+       
+
+       
        
    }
    catch(error) {
