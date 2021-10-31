@@ -24,29 +24,24 @@ async function run() {
            res.status(200).json(allService);
        })
 
-       app.get('/my-all-orders', async(req,res) => {
-        const result = await userOrderCollection.find({}).toArray();
-       
-        res.send(result);
-
-       })
+      
 
        app.get('/manage-all-orders', async(req,res) => {
-           const result = await allOrder.find({}).toArray();
+           const result = await allOrder.find({}).toArray();          
            res.send(result);
        })
 
        //post api
 
-       app.post('/add-order', async(req,res) => {
-            const result = await userOrderCollection.insertOne(req.body);
+       app.post('/add-order', async(req,res) => {             
+            const result = await userOrderCollection.insertOne(req.body);            
             res.send(result);
            
        })
 
        app.post('/manage-all-orders', async(req,res) => {
            const result = await allOrder.insertOne(req.body);
-           res.end();
+           res.send(result);
        })
        
        app.post('/add-service', async(req,res) => {
