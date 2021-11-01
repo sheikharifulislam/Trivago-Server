@@ -14,7 +14,7 @@ async function run() {
    try{
         await client.connect();
         const database = client.db('trivago');
-        const userOrderCollection = database.collection("User-Order");
+        const myOrders = database.collection("User-Order");
         const allOrder = database.collection("All-Order");
         const serviceData = database.collection("All-Service");
         
@@ -24,22 +24,27 @@ async function run() {
            res.status(200).json(allService);
        })
 
-      
-
        app.get('/manage-all-orders', async(req,res) => {
            const result = await allOrder.find({}).toArray();          
            res.send(result);
        })
 
-       //post api
+       app.get('/my-all-orders', async(req,res) => {
+           const {userEmailId} = req.query;
+           const query = {userEmail: userEmailId}         
+           const myAllOrders = await myOrders.find(query).toArray();           
+           res.send(myAllOrders);
+       })
 
+
+       //post api
        app.post('/add-order', async(req,res) => {             
-            const result = await userOrderCollection.insertOne(req.body);            
+            const result = await myOrders.insertOne(req.body);            
             res.send(result);
            
        })
 
-       app.post('/manage-all-orders', async(req,res) => {
+       app.post('/manage-add-orders', async(req,res) => {
            const result = await allOrder.insertOne(req.body);
            res.send(result);
        })
@@ -63,6 +68,13 @@ async function run() {
            const result = await allOrder.updateOne(filter, updateOrderStatus);
            res.send(result);
        })
+
+       //delete
+       app.delete('/delete-my-single-order', async(req,res) => {
+           const {orderId} = req.query;
+           const result = await myOrders.deleteOne({_id: objectId(orderId)});
+           res.send(result);
+       })
        
 
        
@@ -77,7 +89,7 @@ async function run() {
 }
 
 app.get('/', async(req,res) => {
-    res.send("<h1>Well Come</h1>")
+    res.send("<h1>Well Come to Trivago</h1>")
 })
 
 run();
