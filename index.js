@@ -36,6 +36,12 @@ async function run() {
            res.send(myAllOrders);
        })
 
+       app.get('/service-details', async(req,res) => {
+            const {serviceId} = req.query;
+            const result = await serviceData.findOne({_id: objectId(serviceId)});
+            res.send(result);
+       })
+
 
        //post api
        app.post('/add-order', async(req,res) => {             
