@@ -31,7 +31,7 @@ async function run() {
 
        app.get('/my-all-orders', async(req,res) => {
            const {userEmailId} = req.query;
-           const query = {userEmail: userEmailId}         
+           const query = {userEmail: userEmailId};         
            const myAllOrders = await myOrders.find(query).toArray();           
            res.send(myAllOrders);
        })
@@ -39,7 +39,7 @@ async function run() {
        app.get('/service-details', async(req,res) => {
             const {serviceId} = req.query;
             const result = await serviceData.findOne({_id: objectId(serviceId)});
-            res.send(result);
+            res.send(result)
        })
 
 
